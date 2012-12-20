@@ -113,7 +113,7 @@ The following keys are bound in this minor mode:
   (with-current-buffer (get-buffer-create "foo") (inferior-kwin-mode))
   "Return inferior Kwin buffer. Create a new one if neccesary."
   (when (not (buffer-live-p inferior-kwin-buffer))
-    (with-current-buffer (setq inferior-kwin-buffer (get-buffer-create "Inf-Kwin")) (inferior-kwin-mode)))
+    (with-current-buffer (setq inferior-kwin-buffer (get-buffer-create "Inf-KWin")) (inferior-kwin-mode)))
   inferior-kwin-buffer)
 
 (defun kwin-write-to-output (type message script-id)
