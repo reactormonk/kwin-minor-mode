@@ -31,7 +31,6 @@
 ;;; TODO:
 ;; - faces
 ;; - a way to stop scripts
-;; - coffeescript support
 
 ;;; Code:
 
@@ -87,17 +86,33 @@ The following keys are bound in this minor mode:
 (defun kwin-send-region (start end)
   "Send the region to KWin via dbus."
   (interactive "r")
-  (let ((kwin-temporary-file (make-temp-file "emacs-kwin")))
-    (write-region start end kwin-temporary-file)
-    (kwin-send-file kwin-temporary-file))
+  (kwin-send-file (kwin-region-to-file start end))
   (display-buffer (inferior-kwin-buffer)))
 
 (defun kwin-save-buffer-and-send ()
   "Save the current buffer and load the file into KWin."
   (interactive)
-  (save-buffer)
-  (kwin-send-file (buffer-file-name))
+  (kwin-send-file (kwin-save-and-compile-file))
   (display-buffer (inferior-kwin-buffer)))
+
+(defun kwin-region-to-file (start end)
+  "Saves the region to a tempfile and returns the path. If
+necessary, the source is compiled."
+  (let ((kwin-temporary-file (make-temp-file "emacs-kwin")))
+    (case major-mode
+        (js-mode
+         (write-region start end kwin-temporary-file))
+        (coffee-mode (coffee-compile-region start end)
+                     (with-current-buffer coffee-compiled-buffer-name
+                       (write-region (point-min point-max)))))
+    kwin-temporary-file))
+
+(defun kwin-save-and-compile-file ()
+  "Returns the path to the compiled file."
+  (save-buffer)
+  (case major-mode
+    (js-mode (buffer-file-name))
+    (coffee-mode (coffee-compile-file) (coffee-compiled-file-name))))
 
 ;;; Inferior Mode
 
