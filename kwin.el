@@ -70,7 +70,8 @@ The following keys are bound in this minor mode:
   "Sends the path to KWin, tells it to load the file and connects the stdout and stderr to the inf-kwin buffer."
   (lexical-let* ((script-id (dbus-call-method :session "org.kde.kwin.Scripting" "/Scripting" "org.kde.kwin.Scripting" "loadScript" path))
          (script-path (concat "/" (number-to-string script-id)))
-         (dbus-handles nil))
+         (dbus-handles nil)
+         (start-time (current-time)))
     ;; Register the signals for stdout/stderr
     (flet ((register-output (method handler) (dbus-register-signal :session "org.kde.kwin.Scripting" script-path "org.kde.kwin.Scripting" method handler)))
       (setq dbus-handles (list (register-output "print" (lambda (stdout) (kwin-write-to-output :stdout stdout script-id)))
@@ -81,7 +82,10 @@ The following keys are bound in this minor mode:
     (dbus-call-method-asynchronously :session "org.kde.kwin.Scripting" script-path "org.kde.kwin.Scripting" "run"
                                      (lambda (&rest args)
                                        (mapc (lambda (handle) (dbus-unregister-object handle)) dbus-handles)
-                                       (kwin-script-exit script-id)))))
+                                       ;; Only report if the script
+                                       ;; took more than 5 secs.
+                                       (when (> (time-to-seconds (time-since start-time)) 5)
+                                         (kwin-script-exit script-id))))))
 
 (defun kwin-send-region (start end)
   "Send the region to KWin via dbus."
