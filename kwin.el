@@ -68,7 +68,7 @@ The following keys are bound in this minor mode:
   :group 'kwin)
 
 (defun kwin-send-file (path)
-  "Sends the path to KWin, tells it to load the file and connects the stdout and stderr to the kwin-repl buffer."
+  "Sends the path to KWin, tells it to load the file and connects the stdout and stderr to the inf-kwin buffer."
   (lexical-let* ((script-id (dbus-call-method :session "org.kde.kwin.Scripting" "/Scripting" "org.kde.kwin.Scripting" "loadScript" path))
          (script-path (concat "/" (number-to-string script-id)))
          (dbus-handles nil))
@@ -87,7 +87,7 @@ The following keys are bound in this minor mode:
 (defun kwin-send-region (start end)
   "Send the region to KWin via dbus."
   (interactive "r")
-  (let ((kwin-temporary-file (make-temp-file "emacs-kwinrepl")))
+  (let ((kwin-temporary-file (make-temp-file "emacs-kwin")))
     (write-region start end kwin-temporary-file)
     (kwin-send-file kwin-temporary-file))
   (display-buffer (inferior-kwin-buffer)))
@@ -117,7 +117,7 @@ The following keys are bound in this minor mode:
   inferior-kwin-buffer)
 
 (defun kwin-write-to-output (type message script-id)
-  (with-current-buffer (inferior-kwin-buffer)
+  (with-selected-window (get-buffer-window (inferior-kwin-buffer))
     (insert (concat (format "[%d] " script-id) message "\n"))))
 
 (defun kwin-script-exit (script-id)
