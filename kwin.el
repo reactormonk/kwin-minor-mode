@@ -82,22 +82,22 @@ The following keys are bound in this minor mode:
     (dbus-call-method-asynchronously :session "org.kde.kwin.Scripting" script-path "org.kde.kwin.Scripting" "run"
                                      (lambda (&rest args)
                                        (mapc (lambda (handle) (dbus-unregister-object handle)) dbus-handles)
-                                       (kwin-script-exit (script-id))))))
+                                       (kwin-script-exit script-id)))))
 
 (defun kwin-send-region (start end)
   "Send the region to KWin via dbus."
   (interactive "r")
-  (let (( kwin-temporary-file (make-temp-file "emacs-kwinrepl")))
+  (let ((kwin-temporary-file (make-temp-file "emacs-kwinrepl")))
     (write-region start end kwin-temporary-file)
     (kwin-send-file kwin-temporary-file))
-  (display-buffer inferior-kwin-buffer))
+  (display-buffer (inferior-kwin-buffer)))
 
 (defun kwin-save-buffer-and-send ()
   "Save the current buffer and load the file into KWin."
   (interactive)
   (save-buffer)
   (kwin-send-file (buffer-file-name))
-  (display-buffer inferior-kwin-buffer))
+  (display-buffer (inferior-kwin-buffer)))
 
 ;;; Inferior Mode
 
@@ -118,10 +118,9 @@ The following keys are bound in this minor mode:
 
 (defun kwin-write-to-output (type message script-id)
   (with-current-buffer (inferior-kwin-buffer)
-    (insert (concat message "\n"))))
+    (insert (concat (format "[%d] " script-id) message "\n"))))
 
 (defun kwin-script-exit (script-id)
-  (dbus-unregister-object handle)
   (kwin-write-to-output :info "The script finished executing."  script-id))
 
 ;;;###autoload
