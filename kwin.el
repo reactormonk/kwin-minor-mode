@@ -144,7 +144,8 @@ necessary, the source is compiled."
   inferior-kwin-buffer)
 
 (defun kwin-write-to-output (type message script-id)
-  (with-selected-window (get-buffer-window (inferior-kwin-buffer))
+  (with-current-buffer (inferior-kwin-buffer)
+    (goto-char (point-max))
     (insert (concat (format "[%d] " script-id) message "\n"))))
 
 (defun kwin-script-exit (script-id)
