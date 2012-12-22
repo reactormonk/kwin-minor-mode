@@ -121,6 +121,11 @@ necessary, the source is compiled."
     (js-mode (buffer-file-name))
     (coffee-mode (coffee-compile-file) (coffee-compiled-file-name))))
 
+(defun kwin-kill-script (script-id)
+  "Kill script with supplied id."
+  (interactive "N")
+  (dbus-call-method :session "org.kde.kwin.Scripting" (concat "/" (number-to-string script-id)) "org.kde.kwin.Scripting" "stop"))
+
 ;;; Inferior Mode
 
 (defvar inferior-kwin-buffer nil
