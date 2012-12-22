@@ -70,7 +70,7 @@ The following keys are bound in this minor mode:
   "Sends the path to KWin, tells it to load the file and connects the stdout and stderr to the inf-kwin buffer."
   (lexical-let* ((script-id (dbus-call-method :session "org.kde.kwin.Scripting" "/Scripting" "org.kde.kwin.Scripting" "loadScript" path))
          (script-path (concat "/" (number-to-string script-id)))
-         (dbus-handles nil)
+         (dbus-handles nil)             ; TODO: unregister these
          (start-time (current-time)))
     ;; Register the signals for stdout/stderr
     (flet ((register-output (method handler) (dbus-register-signal :session "org.kde.kwin.Scripting" script-path "org.kde.kwin.Scripting" method handler)))
@@ -78,10 +78,13 @@ The following keys are bound in this minor mode:
                                (register-output "printError" (lambda (stderr) (kwin-write-to-output :stderr stderr script-id))))))
 
     ;; This should clean up as soon as the call returns, which
-    ;; indicates the script is done.
+    ;; indicates the script is done. Note that setting up signals via
+    ;; connect isn't captured here, so we don't do cleanup... yet.
+    ;; Apparently, the output isn't displayed twice even with the same
+    ;; script id reused, so we should be fine.
     (dbus-call-method-asynchronously :session "org.kde.kwin.Scripting" script-path "org.kde.kwin.Scripting" "run"
                                      (lambda (&rest args)
-                                       (mapc (lambda (handle) (dbus-unregister-object handle)) dbus-handles)
+                                       
                                        ;; Only report if the script
                                        ;; took more than 5 secs.
                                        (when (> (time-to-seconds (time-since start-time)) 5)
