@@ -111,7 +111,7 @@ necessary, the source is compiled."
          (write-region start end kwin-temporary-file))
         (coffee-mode (coffee-compile-region start end)
                      (with-current-buffer coffee-compiled-buffer-name
-                       (write-region (point-min point-max)))))
+                       (write-region (point-min) (point-max) kwin-temporary-file))))
     kwin-temporary-file))
 
 (defun kwin-save-and-compile-file ()
