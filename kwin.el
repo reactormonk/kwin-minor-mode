@@ -1,3 +1,5 @@
+;;; kwin.el --- communcate with the KWin window manager
+;;
 ;; Copyright (C) 2012 by Simon Hafner
 ;;
 ;; This program is free software; you can redistribute it and/or modify
