@@ -139,7 +139,6 @@ necessary, the source is compiled."
     map))
 
 (defun inferior-kwin-buffer ()
-  (with-current-buffer (get-buffer-create "foo") (inferior-kwin-mode))
   "Return inferior Kwin buffer. Create a new one if neccesary."
   (when (not (buffer-live-p inferior-kwin-buffer))
     (with-current-buffer (setq inferior-kwin-buffer (get-buffer-create "Inf-KWin")) (inferior-kwin-mode)))
@@ -147,8 +146,12 @@ necessary, the source is compiled."
 
 (defun kwin-write-to-output (type message script-id)
   (with-current-buffer (inferior-kwin-buffer)
-    (goto-char (point-max))
-    (insert (concat (format "[%d] " script-id) message "\n"))))
+    (let ((insert-point (point-max)))
+      (goto-char (point-max))
+      (insert (concat (format "[%d] " script-id) message "\n"))
+      (goto-char insert-point)
+      (next-line)
+      (recenter 0))))
 
 (defun kwin-script-exit (script-id)
   (kwin-write-to-output :info "The script finished executing."  script-id))
