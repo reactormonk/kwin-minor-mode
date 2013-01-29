@@ -18,6 +18,11 @@
 ;;
 ;; Substational copy/pasting from mozrepl (Massimiliano Mirra)
 
+;; Author: Simon Hafner
+;; URL: http://github.com/Tass/kwin-minor-mode
+;; Version: 0.1
+
+
 ;;; Commentary:
 ;;
 ;; This file implements communcation with the KWin window manager from
