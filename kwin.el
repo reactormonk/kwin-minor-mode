@@ -113,7 +113,11 @@ necessary, the source is compiled."
          (write-region start end kwin-temporary-file))
         (coffee-mode (coffee-compile-region start end)
                      (with-current-buffer coffee-compiled-buffer-name
-                       (write-region (point-min) (point-max) kwin-temporary-file))))
+                       (write-region (point-min) (point-max) kwin-temporary-file)))
+        (nimrod-mode (nimrod-compile-region-to-js start end)
+                     (with-current-buffer nimrod-compiled-buffer-name
+                       (write-region (point-min) (point-max) kwin-temporary-file)))
+        (t (error "mode not supported")))
     kwin-temporary-file))
 
 (defun kwin-save-and-compile-file ()
@@ -121,7 +125,8 @@ necessary, the source is compiled."
   (save-buffer)
   (case major-mode
     (js-mode (buffer-file-name))
-    (coffee-mode (coffee-compile-file) (coffee-compiled-file-name))))
+    (coffee-mode (coffee-compile-file) (coffee-compiled-file-name))
+    (t (error "mode not supported"))))
 
 (defun kwin-kill-script (script-id)
   "Kill script with supplied id."
