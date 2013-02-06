@@ -134,9 +134,15 @@ necessary, the source is compiled."
     (t (error "mode not supported"))))
 
 (defun kwin-kill-script (script-id)
-  "Kill script with supplied id."
-  (interactive "N")
-  (dbus-call-method :session "org.kde.kwin.Scripting" (concat "/" (number-to-string script-id)) "org.kde.kwin.Scripting" "stop"))
+  "Kill script with supplied id or all, if called without prefix."
+  (interactive "P")
+  (mapc (lambda (path) (dbus-call-method :session "org.kde.kwin.Scripting" path "org.kde.kwin.Scripting" "stop"))
+        (mapcar (apply-partially 'concat "/")
+                (if script-id
+                    (list script-id)
+                  (remove-if-not
+                   (apply-partially 'string-match "[[:digit:]]+")
+                   (dbus-introspect-get-node-names :session "org.kde.kwin.Scripting" "/"))))))
 
 ;;; Inferior Mode
 
