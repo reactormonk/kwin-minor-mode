@@ -52,6 +52,7 @@
     ;; (define-key map "\C-c\C-c" 'kwin-send-defun-and-go)
     (define-key map "\C-c\C-r" 'kwin-send-region)
     (define-key map "\C-c\C-l" 'kwin-save-buffer-and-send)
+    (define-key map "\C-c\C-k" 'kwin-kill-script)
     map))
 
 ;;;###autoload
