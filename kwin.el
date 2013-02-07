@@ -107,7 +107,7 @@ The following keys are bound in this minor mode:
 (defun kwin-save-buffer-and-send ()
   "Save the current buffer and load the file into KWin."
   (interactive)
-  (kwin-send-file (kwin-save-and-compile-file))
+  (kwin-save-and-compile-file 'kwin-send-file)
   (display-buffer (inferior-kwin-buffer)))
 
 (defun kwin-region-to-file (start end)
@@ -126,12 +126,16 @@ necessary, the source is compiled."
         (t (error "mode not supported")))
     kwin-temporary-file))
 
-(defun kwin-save-and-compile-file ()
-  "Returns the path to the compiled file."
+(defun kwin-save-and-compile-file (callback)
+  "Passes the path to the compiled file to the callback."
   (save-buffer)
   (case major-mode
-    (js-mode (buffer-file-name))
-    (coffee-mode (coffee-compile-file) (coffee-compiled-file-name))
+    (js-mode
+     (funcall callback (buffer-file-name)))
+    (coffee-mode
+     (coffee-compile-file) (funcall callback (coffee-compiled-file-name)))
+    (nimrod-mode
+     (nimrod-compile-file-to-js callback))
     (t (error "mode not supported"))))
 
 (defun kwin-kill-script (script-id)
