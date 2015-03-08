@@ -1,4 +1,4 @@
-;;; kwin.el --- communcate with the KWin window manager
+;;; kwin.el --- communicatewith the KWin window manager
 ;;
 ;; Copyright (C) 2012 by Simon Hafner
 ;;
@@ -19,7 +19,7 @@
 ;; Substational copy/pasting from mozrepl (Massimiliano Mirra)
 
 ;; Author: Simon Hafner
-;; URL: http://github.com/Tass/kwin-minor-mode
+;; URL: http://github.com/reactormonk/kwin-minor-mode
 ;; Version: 0.1
 
 
