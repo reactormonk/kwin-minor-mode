@@ -167,12 +167,12 @@ necessary, the source is compiled."
 
 (defun kwin-write-to-output (type message script-id)
   (with-current-buffer (inferior-kwin-buffer)
-    (let ((insert-point (point-max)))
-      (goto-char (point-max))
-      (insert (concat (format "[%d] " script-id) message "\n"))
-      (goto-char insert-point)
-      (next-line)
-      (recenter 0))))
+    (with-selected-window (get-buffer-window)
+      (let ((insert-point (point-max)))
+        (goto-char (point-max))
+        (insert (concat (format "[%d] " script-id) message "\n"))
+        (goto-char insert-point)
+        (forward-line)))))
 
 (defun kwin-script-exit (script-id)
   (kwin-write-to-output :info "The script finished executing."  script-id))
